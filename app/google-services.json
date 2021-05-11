@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "883428341324",
+    "firebase_url": "https://etec-f76bd-default-rtdb.firebaseio.com",
+    "project_id": "etec-f76bd",
+    "storage_bucket": "etec-f76bd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883428341324:android:78e1108e275284c98c26e9",
+        "android_client_info": {
+          "package_name": "com.example.camera_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883428341324-29dohi336nils7u4prq7t0fq98qcdqsh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.camera_firebase",
+            "certificate_hash": "3a70de0470c778a5eacd254b009f796a8ad056d6"
+          }
+        },
+        {
+          "client_id": "883428341324-qnk6nvlfoedf0h96as4cclgrkn4753cp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAMupukiVS1ZhgxsuxYsQfNEKgOIo_6rU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883428341324-qnk6nvlfoedf0h96as4cclgrkn4753cp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883428341324:android:fd2f909a92a615ad8c26e9",
+        "android_client_info": {
+          "package_name": "com.example.notificao"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883428341324-qnk6nvlfoedf0h96as4cclgrkn4753cp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAMupukiVS1ZhgxsuxYsQfNEKgOIo_6rU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883428341324-qnk6nvlfoedf0h96as4cclgrkn4753cp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883428341324:android:45faf5d64a12f96c8c26e9",
+        "android_client_info": {
+          "package_name": "com.example.restaurant_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883428341324-qnk6nvlfoedf0h96as4cclgrkn4753cp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAMupukiVS1ZhgxsuxYsQfNEKgOIo_6rU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883428341324-qnk6nvlfoedf0h96as4cclgrkn4753cp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

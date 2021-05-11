@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.CadastrarUsuarioFragment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputEmailCadastro"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginEnd="24dp"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/edt_emailCadastrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_email"
+            android:inputType="textEmailAddress"
+            android:selectAllOnFocus="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputSenhaCadastrar"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="@+id/textInputEmailCadastro"
+        app:layout_constraintStart_toStartOf="@+id/textInputEmailCadastro"
+        app:layout_constraintTop_toBottomOf="@+id/textInputEmailCadastro">
+
+
+        <EditText
+            android:id="@+id/edt_senhaCadastrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/prompt_password"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:selectAllOnFocus="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_cadastrar"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="24dp"
+        android:enabled="true"
+        android:text="@string/cadastrar_button"
+        app:layout_constraintEnd_toEndOf="@+id/textInputSenhaCadastrar"
+        app:layout_constraintTop_toBottomOf="@+id/textInputSenhaCadastrar" />
+
+    <Button
+        android:id="@+id/btn_voltar"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="24dp"
+        android:enabled="true"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="@string/button_voltar"
+        app:layout_constraintStart_toStartOf="@+id/textInputSenhaCadastrar"
+        app:layout_constraintTop_toBottomOf="@+id/textInputSenhaCadastrar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
