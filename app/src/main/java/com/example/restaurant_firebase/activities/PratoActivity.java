@@ -15,17 +15,38 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.restaurant_firebase.R;
+import com.example.restaurant_firebase.model.PratoDto;
+import com.example.restaurant_firebase.util.ConfigFirebase;
 import com.example.restaurant_firebase.util.ConfigPermissoes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthEmailException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class PratoActivity extends AppCompatActivity {
 
     String[] permissoes = {Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
     ImageView imageViewPrato;
     Button buttonCadastrar;
+    EditText editTextNome, editTextValor, editTextDescricao;
+    Bitmap bitmap;
+    DatabaseReference databaseReference;
+    StorageReference storageReference;
+    FirebaseAuth firebaseAuth;
     int CAMERA = 1000;
     int GALERIA = 2000;
     AlertDialog.Builder builder;
@@ -37,6 +58,8 @@ public class PratoActivity extends AppCompatActivity {
 
         initView();
 
+        firebaseAuth = ConfigFirebase.getFirebaseAuth();
+
         builder = new AlertDialog.Builder(this);
         builder.setMessage("Você precisa conceder pelo menos uma permissão");
         builder.setNeutralButton("Cancelar", null);
@@ -44,7 +67,36 @@ public class PratoActivity extends AppCompatActivity {
         buttonCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(PratoActivity.this, "OI", Toast.LENGTH_SHORT).show();
+                String nome = editTextNome.getText().toString();
+                String valor = editTextValor.getText().toString();
+                String descricao = editTextDescricao.getText().toString();
+
+                firebaseAuth = ConfigFirebase.getFirebaseAuth();
+                boolean cadastradoImagem = uploadImagem(nome);
+
+                PratoDto pratoDto = new PratoDto(nome, valor,
+                        descricao, nome+".JPEG", firebaseAuth.getCurrentUser().getEmail());
+                databaseReference = ConfigFirebase.getDatabaseReference().child("pratos").child(pratoDto.getNome());
+                if(cadastradoImagem){
+                    databaseReference.setValue(pratoDto).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(PratoActivity.this, "Sucesso ao Inserir o Prato", Toast.LENGTH_SHORT).show();
+                                builder.setMessage("Deseja voltar para tela inicial?");
+                                builder.setNeutralButton("", null);
+                                builder.setNegativeButton("Não", null);
+                                builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                    }
+                                });
+                                builder.show();
+                            }
+                        }
+                    });
+                }
             }
         });
 
@@ -70,10 +122,30 @@ public class PratoActivity extends AppCompatActivity {
         });
     }
 
+    private boolean uploadImagem(String nome) {
+        if(bitmap != null){
+            imageViewPrato.setImageBitmap(bitmap);
+            storageReference = ConfigFirebase.getFirebaseStorage().child("imagens").child("prato").child(nome+".JPEG");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            storageReference.putBytes(byteArray);
+            return true;
+        } else{
+            Toast.makeText(this, "Por favor selecionar alguma imagem para o seu Prato!!!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
     private void initView() {
         imageViewPrato = findViewById(R.id.img_avatar);
         buttonCadastrar = findViewById(R.id.btn_cadastrarPrato);
+        editTextNome = findViewById(R.id.edt_nomePrato);
+        editTextValor = findViewById(R.id.edt_valorPrato);
+        editTextDescricao = findViewById(R.id.edt_descricaoPrato);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Adicionar novo Prato");
     }
 
     private void buttonNegative() {
@@ -101,11 +173,15 @@ public class PratoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == GALERIA && resultCode == RESULT_OK){
-            imageViewPrato.setImageURI(data.getData());
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else if(requestCode == CAMERA && resultCode == RESULT_OK){
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            imageViewPrato.setImageBitmap(bitmap);
+            bitmap = (Bitmap) data.getExtras().get("data");
         }
+        imageViewPrato.setImageBitmap(bitmap);
     }
 
     @Override
