@@ -1,6 +1,7 @@
 package com.example.restaurant_firebase;
 
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,6 @@ public class PratoAdapter extends RecyclerView.Adapter<PratoAdapter.viewHolder> 
 
     ArrayList<PratoDto> listPrato;
     OnClickItemPratoListener listener;
-    StorageReference storageReference;
 
     public PratoAdapter(ArrayList<PratoDto> listPrato, OnClickItemPratoListener listener) {
         this.listPrato = listPrato;
@@ -43,20 +43,11 @@ public class PratoAdapter extends RecyclerView.Adapter<PratoAdapter.viewHolder> 
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         PratoDto prato = listPrato.get(position);
+        Picasso.get().load(prato.getImagem()).into(holder.imageViewPrato);
         holder.textViewNome.setText(prato.getNome());
         holder.textViewDescricao.setText(prato.getDescricao());
-        storageReference = ConfigFirebase.getFirebaseStorage().child("imagens").child("prato").child(prato.getImagem());
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri.toString()).into(holder.imageViewPrato);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                e.printStackTrace();
-            }
-        });
+        holder.textViewPreco.setText("R$"+prato.getValor());
+
     }
 
     @Override
@@ -66,13 +57,14 @@ public class PratoAdapter extends RecyclerView.Adapter<PratoAdapter.viewHolder> 
 
     class viewHolder extends RecyclerView.ViewHolder{
         ImageView imageViewPrato;
-        TextView textViewNome, textViewDescricao;
+        TextView textViewNome, textViewDescricao, textViewPreco;
 
         public viewHolder(@NonNull View itemView, OnClickItemPratoListener listener) {
             super(itemView);
 
             textViewNome = itemView.findViewById(R.id.txt_nomePratoAdapter);
             textViewDescricao = itemView.findViewById(R.id.txt_descricaoAdapter);
+            textViewPreco = itemView.findViewById(R.id.txt_precoAdapter);
             imageViewPrato = itemView.findViewById(R.id.img_avatarAdapter);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -91,5 +83,4 @@ public class PratoAdapter extends RecyclerView.Adapter<PratoAdapter.viewHolder> 
             });
         }
     }
-
 }

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.PratoActivity">
+    tools:context=".activities.PratoActivity"
+    android:background="@color/corBlackground">
 
 
     <androidx.cardview.widget.CardView
@@ -43,12 +44,12 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout2"
+        android:id="@+id/textInputLayoutNome"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,38 +64,39 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout4"
+        android:id="@+id/textInputLayoutValor"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout2"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayoutNome"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayoutNome"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutNome">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edt_valorPrato"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Valor" />
+            android:hint="Valor"
+            android:inputType="numberDecimal"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout3"
+        android:id="@+id/textInputLayoutDescricao"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayoutValor"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayoutValor"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutValor"
         android:layout_marginTop="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edt_descricaoPrato"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Descrição" />
+            android:hint="Descrição"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -103,8 +105,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Cadastrar"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout3"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout3"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayoutDescricao"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayoutDescricao"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutDescricao" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

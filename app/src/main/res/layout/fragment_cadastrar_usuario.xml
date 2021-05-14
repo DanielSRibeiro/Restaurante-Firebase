@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.CadastrarUsuarioFragment">
+    tools:context=".fragment.CadastrarUsuarioFragment"
+    android:background="@color/corBlackground">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputEmailCadastro"
@@ -35,7 +36,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:endIconMode="clear_text"
+        app:endIconMode="password_toggle"
         app:layout_constraintEnd_toEndOf="@+id/textInputEmailCadastro"
         app:layout_constraintStart_toStartOf="@+id/textInputEmailCadastro"
         app:layout_constraintTop_toBottomOf="@+id/textInputEmailCadastro">

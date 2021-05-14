@@ -21,4 +21,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.frameLayout_login, loginFragment);
         transaction.commit();
     }
+    public void setToolbarTitle(String title){
+        getSupportActionBar().setTitle(title);
+    }
 }

@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -23,16 +24,15 @@ import com.example.restaurant_firebase.R;
 import com.example.restaurant_firebase.model.PratoDto;
 import com.example.restaurant_firebase.util.ConfigFirebase;
 import com.example.restaurant_firebase.util.ConfigPermissoes;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthEmailException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,6 +43,7 @@ public class PratoActivity extends AppCompatActivity {
     ImageView imageViewPrato;
     Button buttonCadastrar;
     EditText editTextNome, editTextValor, editTextDescricao;
+    TextInputLayout textInputNome, textInputValor, textInputDescricao;
     Bitmap bitmap;
     DatabaseReference databaseReference;
     StorageReference storageReference;
@@ -71,70 +72,19 @@ public class PratoActivity extends AppCompatActivity {
                 String valor = editTextValor.getText().toString();
                 String descricao = editTextDescricao.getText().toString();
 
-                firebaseAuth = ConfigFirebase.getFirebaseAuth();
-                boolean cadastradoImagem = uploadImagem(nome);
 
-                PratoDto pratoDto = new PratoDto(nome, valor,
-                        descricao, nome+".JPEG", firebaseAuth.getCurrentUser().getEmail());
-                databaseReference = ConfigFirebase.getDatabaseReference().child("pratos").child(pratoDto.getNome());
-                if(cadastradoImagem){
-                    databaseReference.setValue(pratoDto).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(PratoActivity.this, "Sucesso ao Inserir o Prato", Toast.LENGTH_SHORT).show();
-                                builder.setMessage("Deseja voltar para tela inicial?");
-                                builder.setNeutralButton("", null);
-                                builder.setNegativeButton("Não", null);
-                                builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        finish();
-                                    }
-                                });
-                                builder.show();
-                            }
-                        }
-                    });
-                }
+                firebaseAuth = ConfigFirebase.getFirebaseAuth();
+                boolean preenchido = validacaoFormulario(nome, valor, descricao);
+                uploadImagem(preenchido, nome, valor, descricao);
             }
         });
 
         imageViewPrato.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConfigPermissoes.validarPermissoes(PratoActivity.this, permissoes, 1);
-
-                if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_GRANTED){
-                    buttonPositive();
-                }
-                if (ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED){
-                    buttonNegative();
-                }
-                if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED){
-                    builder.show();
-                }
+                permissoesHandler();
             }
         });
-    }
-
-    private boolean uploadImagem(String nome) {
-        if(bitmap != null){
-            imageViewPrato.setImageBitmap(bitmap);
-            storageReference = ConfigFirebase.getFirebaseStorage().child("imagens").child("prato").child(nome+".JPEG");
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-            storageReference.putBytes(byteArray);
-            return true;
-        } else{
-            Toast.makeText(this, "Por favor selecionar alguma imagem para o seu Prato!!!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
     }
 
     private void initView() {
@@ -143,9 +93,128 @@ public class PratoActivity extends AppCompatActivity {
         editTextNome = findViewById(R.id.edt_nomePrato);
         editTextValor = findViewById(R.id.edt_valorPrato);
         editTextDescricao = findViewById(R.id.edt_descricaoPrato);
+        textInputNome = findViewById(R.id.textInputLayoutNome);
+        textInputValor = findViewById(R.id.textInputLayoutValor);
+        textInputDescricao = findViewById(R.id.textInputLayoutDescricao);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Adicionar novo Prato");
+
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            editTextNome.setText(bundle.getString("KEY_NOME"));
+            editTextValor.setText(bundle.getString("KEY_VALOR"));
+            editTextDescricao.setText(bundle.getString("KEY_DESCR"));
+            Picasso.get().load(bundle.getString("KEY_IMAGEM")).into(imageViewPrato);
+
+            editTextNome.setEnabled(false);
+            editTextValor.setEnabled(false);
+            editTextDescricao.setEnabled(false);
+            imageViewPrato.setEnabled(false);
+            buttonCadastrar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void permissoesHandler() {
+        ConfigPermissoes.validarPermissoes(PratoActivity.this, permissoes, 1);
+
+        if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED){
+            buttonPositive();
+        }
+        if (ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED){
+            buttonNegative();
+        }
+        if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED){
+            builder.show();
+        }
+    }
+
+    private boolean validacaoFormulario(String nome, String valor, String descricao) {
+        boolean valido = true;
+        if(nome.isEmpty()){
+            valido = false;
+            textInputNome.setError("Por favor preencha o E-Mail");
+        }else{
+            textInputNome.setError("");
+        }
+
+        if(valor.isEmpty()){
+            valido = false;
+            textInputValor.setError("Por favor preencha a Senha");
+
+        }else{
+            textInputValor.setError("");
+        }
+
+        if(descricao.isEmpty()){
+            valido = false;
+            textInputDescricao.setError("Por favor preencha a Senha");
+
+        }else{
+            textInputDescricao.setError("");
+        }
+
+        return valido;
+    }
+
+    private void uploadImagem(boolean valido, String nome, String valor, String descricao) {
+        if(valido){
+            if(bitmap != null){
+                imageViewPrato.setImageBitmap(bitmap);
+                storageReference = ConfigFirebase.getFirebaseStorage().child("imagens").child("prato").child(nome+".jpeg");
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                byte[] byteArray = stream.toByteArray();
+
+                UploadTask uploadTask = storageReference.putBytes(byteArray);
+
+                Task<Uri> upload =  uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful()){
+                            task.getException().printStackTrace();
+                        }
+                        return storageReference.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()){
+                            Uri downloadUrl = task.getResult();
+
+                            PratoDto pratoDto = new PratoDto(nome, valor, descricao, downloadUrl.toString(),
+                                    firebaseAuth.getCurrentUser().getEmail());
+                            databaseReference = ConfigFirebase.getDatabaseReference().child("pratos").child(pratoDto.getNome());
+                            databaseReference.setValue(pratoDto).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(PratoActivity.this, "Sucesso ao cadastrar o prato", Toast.LENGTH_SHORT).show();
+                                        builder.setMessage("Deseja voltar para tela inicial?");
+                                        builder.setNeutralButton("", null);
+                                        builder.setNegativeButton("Não", null);
+                                        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                finish();
+                                            }
+                                        });
+                                        builder.show();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+            } else{
+                Toast.makeText(this, "Por favor selecionar alguma imagem para o seu Prato!!!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void buttonNegative() {
@@ -204,4 +273,5 @@ public class PratoActivity extends AppCompatActivity {
         finish();
         return super.onSupportNavigateUp();
     }
+
 }
