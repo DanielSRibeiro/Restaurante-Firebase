@@ -13,8 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RestaurantFirebase">
-        <activity android:name=".activities.PratoActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name=".activities.MainActivity" android:screenOrientation="portrait">
+        <activity android:name=".presentation.PratoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".presentation.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
