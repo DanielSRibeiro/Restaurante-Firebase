@@ -12,18 +12,20 @@ Aplicativo de um restaurante onde é obrigatório realizar um login para poder e
 
 <img src="img/cadastrarUsuario.gif" width="250" />
 
-### Login Usuário
+### Login Usuário (Manualmente e Google)
 
-<img src="img/loginUsuario.gif" width="250" />
-
-<img src="img/google.gif" width="250" />
+<div>
+  <img src="img/loginUsuario.gif" width="250" />
+  <img src="img/google.gif" width="250" />
+<div/>
 
 ### Menu
 
 <img src="img/menu.png" width="250" />
 
-### Prato
+### Prato (Cadastrar e excluir Prato)
 
-<img src="img/prato.gif" width="250" />
-
-<img src="img/excluir.gif" width="250" />
+<div>
+  <img src="img/prato.gif" width="250" />
+  <img src="img/excluir.gif" width="250" />
+<div/>
