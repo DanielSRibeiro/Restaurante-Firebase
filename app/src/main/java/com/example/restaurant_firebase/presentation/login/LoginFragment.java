@@ -1,9 +1,8 @@
-package com.example.restaurant_firebase.presentation.Login;
+package com.example.restaurant_firebase.presentation.login;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.restaurant_firebase.R;
-import com.example.restaurant_firebase.presentation.CadastrarUsuario.CadastrarUsuarioFragment;
-import com.example.restaurant_firebase.presentation.ConsultaFragment;
+import com.example.restaurant_firebase.presentation.cadastrarUsuario.CadastrarUsuarioFragment;
 import com.example.restaurant_firebase.presentation.MainActivity;
-import com.example.restaurant_firebase.util.ConfigFirebase;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginFragment extends Fragment implements LoginContract.View{
 

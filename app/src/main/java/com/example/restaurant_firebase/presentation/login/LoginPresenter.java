@@ -1,9 +1,6 @@
-package com.example.restaurant_firebase.presentation.Login;
+package com.example.restaurant_firebase.presentation.login;
 
-import android.widget.Toast;
-
-import com.example.restaurant_firebase.R;
-import com.example.restaurant_firebase.presentation.ConsultaFragment;
+import com.example.restaurant_firebase.presentation.consulta.ConsultaFragment;
 import com.example.restaurant_firebase.util.ConfigFirebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

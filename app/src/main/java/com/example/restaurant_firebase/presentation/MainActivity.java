@@ -10,7 +10,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.restaurant_firebase.R;
-import com.example.restaurant_firebase.presentation.Login.LoginFragment;
+import com.example.restaurant_firebase.presentation.login.LoginFragment;
+import com.example.restaurant_firebase.presentation.consulta.ConsultaFragment;
 import com.example.restaurant_firebase.util.ConfigFirebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;

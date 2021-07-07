@@ -1,4 +1,4 @@
-package com.example.restaurant_firebase.presentation.CadastrarUsuario;
+package com.example.restaurant_firebase.presentation.cadastrarUsuario;
 
 import android.os.Bundle;
 
@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.restaurant_firebase.R;
-import com.example.restaurant_firebase.presentation.Login.LoginFragment;
+import com.example.restaurant_firebase.presentation.login.LoginFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class CadastrarUsuarioFragment extends Fragment implements CadastrarUsuarioContract.View{

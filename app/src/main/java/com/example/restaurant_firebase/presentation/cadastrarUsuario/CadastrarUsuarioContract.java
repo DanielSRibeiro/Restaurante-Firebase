@@ -1,4 +1,4 @@
-package com.example.restaurant_firebase.presentation.CadastrarUsuario;
+package com.example.restaurant_firebase.presentation.cadastrarUsuario;
 
 import androidx.fragment.app.Fragment;
 

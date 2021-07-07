@@ -1,6 +1,6 @@
-package com.example.restaurant_firebase.presentation.CadastrarUsuario;
+package com.example.restaurant_firebase.presentation.cadastrarUsuario;
 
-import com.example.restaurant_firebase.presentation.Login.LoginFragment;
+import com.example.restaurant_firebase.presentation.login.LoginFragment;
 import com.example.restaurant_firebase.util.ConfigFirebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

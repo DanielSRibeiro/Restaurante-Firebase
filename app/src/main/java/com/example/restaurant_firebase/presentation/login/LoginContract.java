@@ -1,4 +1,4 @@
-package com.example.restaurant_firebase.presentation.Login;
+package com.example.restaurant_firebase.presentation.login;
 
 import androidx.fragment.app.Fragment;
 

@@ -1,4 +1,4 @@
-package com.example.restaurant_firebase.presentation;
+package com.example.restaurant_firebase.presentation.prato;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +37,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class PratoActivity extends AppCompatActivity {
+public class PratoActivity extends AppCompatActivity implements PratoContract.View{
 
     String[] permissoes = {Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
     ImageView imageViewPrato;
@@ -45,13 +45,11 @@ public class PratoActivity extends AppCompatActivity {
     EditText editTextNome, editTextValor, editTextDescricao;
     TextInputLayout textInputNome, textInputValor, textInputDescricao;
     Bitmap bitmap;
-    DatabaseReference databaseReference;
-    StorageReference storageReference;
-    FirebaseAuth firebaseAuth;
     int CAMERA = 1000;
     int GALERIA = 2000;
     AlertDialog.Builder builder;
-    
+    PratoContract.Presenter presenter = new PratoPresenter(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +68,6 @@ public class PratoActivity extends AppCompatActivity {
         textInputNome = findViewById(R.id.textInputLayoutNome);
         textInputValor = findViewById(R.id.textInputLayoutValor);
         textInputDescricao = findViewById(R.id.textInputLayoutDescricao);
-        firebaseAuth = ConfigFirebase.getFirebaseAuth();
 
         builder = new AlertDialog.Builder(this);
         builder.setMessage("Você precisa conceder pelo menos uma permissão");
@@ -101,12 +98,9 @@ public class PratoActivity extends AppCompatActivity {
                 String nome = editTextNome.getText().toString();
                 String valor = editTextValor.getText().toString();
                 String descricao = editTextDescricao.getText().toString();
-
-                boolean preenchido = validacaoFormulario(nome, valor, descricao);
-                uploadImagem(preenchido, nome, valor, descricao);
+                uploadImagem(nome, valor, descricao);
             }
         });
-
         imageViewPrato.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,58 +155,13 @@ public class PratoActivity extends AppCompatActivity {
         return valido;
     }
 
-    private void uploadImagem(boolean valido, String nome, String valor, String descricao) {
-        if(valido){
+    private void uploadImagem(String nome, String valor, String descricao) {
+        if(validacaoFormulario(nome, valor, descricao)){
             if(bitmap != null){
                 imageViewPrato.setImageBitmap(bitmap);
-                storageReference = ConfigFirebase.getFirebaseStorage().child("imagens").child("prato").child(nome+".jpeg");
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                byte[] byteArray = stream.toByteArray();
-
-                UploadTask uploadTask = storageReference.putBytes(byteArray);
-
-                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if(!task.isSuccessful()){
-                            task.getException().printStackTrace();
-                        }
-                        return storageReference.getDownloadUrl();
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if(task.isSuccessful()){
-                            Uri downloadUrl = task.getResult();
-
-                            PratoDto pratoDto = new PratoDto(nome, valor, descricao, downloadUrl.toString(),
-                                    firebaseAuth.getCurrentUser().getEmail());
-                            databaseReference = ConfigFirebase.getDatabaseReference().child("pratos").child(pratoDto.getNome());
-                            databaseReference.setValue(pratoDto).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        Toast.makeText(PratoActivity.this, "Sucesso ao cadastrar o prato", Toast.LENGTH_SHORT).show();
-                                        builder.setMessage("Deseja voltar para tela inicial?");
-                                        builder.setNeutralButton("", null);
-                                        builder.setNegativeButton("Não", null);
-                                        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                finish();
-                                            }
-                                        });
-                                        builder.show();
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-
+                presenter.cadastrarImagem(nome, valor, descricao, bitmap);
             } else{
-                Toast.makeText(this, "Por favor selecionar alguma imagem para o seu Prato!!!", Toast.LENGTH_SHORT).show();
+                mostrarToast("Por favor seleciona alguma imagem para o seu Prato!!!");
             }
         }
     }
@@ -240,7 +189,6 @@ public class PratoActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(requestCode == GALERIA && resultCode == RESULT_OK){
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),data.getData());
@@ -258,10 +206,10 @@ public class PratoActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for (int i = 0; i < permissions.length ; i++) {
             if (permissions[i].equals("android.permission.CAMERA") && grantResults[i] == 0){
-                Toast.makeText(this, "Concedida a Camera!!!", Toast.LENGTH_SHORT).show();
+                mostrarToast("Concedida a Camera!!!");
                 buttonPositive();
             } else if (permissions[i].equals("android.permission.READ_EXTERNAL_STORAGE") && grantResults[i] == 0){
-                Toast.makeText(this, "Concedida na Galeria!!!", Toast.LENGTH_SHORT).show();
+                mostrarToast("Concedida na Galeria!!!");
                 buttonNegative();
             }
         }
@@ -274,4 +222,22 @@ public class PratoActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
+    @Override
+    public void cadastradoSucesso() {
+        mostrarToast("Sucesso ao cadastrar o prato");
+        builder.setMessage("Deseja voltar para tela inicial?");
+        builder.setNeutralButton("", null);
+        builder.setNegativeButton("Não", null);
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.show();
+    }
+
+    public void mostrarToast(String toast){
+        Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
+    }
 }
