@@ -49,6 +49,7 @@ public class PratoActivity extends AppCompatActivity implements PratoContract.Vi
     int GALERIA = 2000;
     AlertDialog.Builder builder;
     PratoContract.Presenter presenter = new PratoPresenter(this);
+    boolean valido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,74 +96,53 @@ public class PratoActivity extends AppCompatActivity implements PratoContract.Vi
         buttonCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nome = editTextNome.getText().toString();
-                String valor = editTextValor.getText().toString();
-                String descricao = editTextDescricao.getText().toString();
-                uploadImagem(nome, valor, descricao);
+                uploadImagem(editTextNome.getText().toString(), editTextValor.getText().toString(), editTextDescricao.getText().toString());
             }
         });
+
         imageViewPrato.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                permissoesHandler();
+                ConfigPermissoes.validarPermissoes(PratoActivity.this, permissoes, 1);
+
+                if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED){
+                    buttonPositive();
+                }
+                if (ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED){
+                    buttonNegative();
+                }
+                if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED){
+                    builder.show();
+                }
             }
         });
     }
 
-    private void permissoesHandler() {
-        ConfigPermissoes.validarPermissoes(PratoActivity.this, permissoes, 1);
-
-        if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED){
-            buttonPositive();
-        }
-        if (ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED){
-            buttonNegative();
-        }
-        if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED){
-            builder.show();
-        }
-    }
-
-    private boolean validacaoFormulario(String nome, String valor, String descricao) {
-        boolean valido = true;
-        if(nome.isEmpty()){
-            valido = false;
-            textInputNome.setError("Por favor preencha o E-Mail");
-        }else{
-            textInputNome.setError("");
-        }
-
-        if(valor.isEmpty()){
-            valido = false;
-            textInputValor.setError("Por favor preencha a Senha");
-
-        }else{
-            textInputValor.setError("");
-        }
-
-        if(descricao.isEmpty()){
-            valido = false;
-            textInputDescricao.setError("Por favor preencha a Senha");
-
-        }else{
-            textInputDescricao.setError("");
-        }
-
-        return valido;
-    }
-
     private void uploadImagem(String nome, String valor, String descricao) {
-        if(validacaoFormulario(nome, valor, descricao)){
+        valido = true;
+        validacaoFormulario(nome, textInputNome);
+        validacaoFormulario(valor, textInputValor);
+        validacaoFormulario(descricao, textInputDescricao);
+        if(valido){
             if(bitmap != null){
                 imageViewPrato.setImageBitmap(bitmap);
                 presenter.cadastrarImagem(nome, valor, descricao, bitmap);
             } else{
                 mostrarToast("Por favor seleciona alguma imagem para o seu Prato!!!");
             }
+        }
+    }
+
+    private void validacaoFormulario(String editText, TextInputLayout textInput) {
+        if(editText.length() < 1){
+            valido = false;
+            textInput.setError("Por favor preencha o E-Mail");
+        }else{
+            textInput.setError("");
         }
     }
 
