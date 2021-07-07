@@ -1,4 +1,4 @@
-package com.example.restaurant_firebase.presentation;
+package com.example.restaurant_firebase.presentation.Login;
 
 import android.os.Bundle;
 
@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.example.restaurant_firebase.R;
 import com.example.restaurant_firebase.presentation.CadastrarUsuario.CadastrarUsuarioFragment;
+import com.example.restaurant_firebase.presentation.ConsultaFragment;
+import com.example.restaurant_firebase.presentation.MainActivity;
 import com.example.restaurant_firebase.util.ConfigFirebase;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,14 +25,14 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends Fragment implements LoginContract.View{
 
     Button buttonLogin;
     TextView textViewCadastrar;
     EditText editTextEmail, editTextSenha;
     TextInputLayout textInputEmail, textInputSenha;
-    FirebaseAuth firebaseAuth;
     SignInButton googleButton;
+    LoginContract.Presenter presenter = new LoginPresenter(this);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,13 +61,13 @@ public class LoginFragment extends Fragment {
                 String email = editTextEmail.getText().toString();
                 String senha = editTextSenha.getText().toString();
                 boolean preenchido = validacaoFormulario(email, senha);
-                logarUsuario(preenchido, email, senha);
+                logarUsuario(email, senha);
             }
         });
         textViewCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                transactionFragment(new CadastrarUsuarioFragment());
+                mudarFragment(new CadastrarUsuarioFragment());
             }
         });
         googleButton.setOnClickListener(new View.OnClickListener() {
@@ -96,34 +98,27 @@ public class LoginFragment extends Fragment {
         return valido;
     }
 
-    private void logarUsuario(boolean valido ,String email, String senha) {
-        if(valido){
-            firebaseAuth = ConfigFirebase.getFirebaseAuth();
-            firebaseAuth.signInWithEmailAndPassword(email, senha).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(Task<AuthResult> task) {
-                    if(task.isSuccessful()){
-                        if(firebaseAuth.getCurrentUser().isEmailVerified()){
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.frameLayout_login, new ConsultaFragment())
-                                    .commit();
-                        }else{
-                            Toast.makeText(getActivity(), "Verifique o seu E-Mail para poder realizar o Login!!!", Toast.LENGTH_SHORT).show();
-                        }
-                    } else{
-                        Toast.makeText(getActivity(), "E-Mail ou senha esta incorreta!!!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+    private void logarUsuario(String email, String senha) {
+        if(validacaoFormulario(email, senha)){
+            presenter.realizarLogin(email, senha);
         }
     }
 
-    private void transactionFragment(Fragment fragment) {
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameLayout_login, fragment);
-        transaction.commit();
+    @Override
+    public void mostrarToast(String toast) {
+        Toast.makeText(getActivity(), toast, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void mudarFragment(Fragment fragment) {
+        getActivity().getSupportFragmentManager().beginTransaction().
+                replace(R.id.frameLayout_login, fragment)
+                .commit();
+    }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.detruirView();
+    }
 }

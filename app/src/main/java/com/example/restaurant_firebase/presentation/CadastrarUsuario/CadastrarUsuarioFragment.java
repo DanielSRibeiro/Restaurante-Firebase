@@ -13,23 +13,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.restaurant_firebase.R;
-import com.example.restaurant_firebase.presentation.LoginFragment;
-import com.example.restaurant_firebase.util.ConfigFirebase;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.restaurant_firebase.presentation.Login.LoginFragment;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthEmailException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 public class CadastrarUsuarioFragment extends Fragment implements CadastrarUsuarioContract.View{
 
     Button buttonVoltar, buttonCadastrar;
     EditText editTextEmail, editTextSenha;
     TextInputLayout textInputEmail, textInputSenha;
-    FirebaseAuth firebaseAuth;
+    CadastrarUsuarioContract.Presenter presenter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,6 +34,7 @@ public class CadastrarUsuarioFragment extends Fragment implements CadastrarUsuar
     }
 
     private void initView(View view) {
+        presenter = new CadastrarUsuarioPresenter(this);
         buttonVoltar = view.findViewById(R.id.btn_voltar);
         buttonCadastrar = view.findViewById(R.id.btn_cadastrar);
         editTextEmail = view.findViewById(R.id.edt_emailCadastrar);
@@ -54,7 +47,7 @@ public class CadastrarUsuarioFragment extends Fragment implements CadastrarUsuar
         buttonVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                transactionFragment(new LoginFragment());
+                mudarFragment(new LoginFragment());
             }
         });
         buttonCadastrar.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +58,13 @@ public class CadastrarUsuarioFragment extends Fragment implements CadastrarUsuar
                 cadastrarUsuario(email, senha);
             }
         });
+    }
+
+    private void cadastrarUsuario(String email, String senha) {
+        if(validacaoFormulario(email, senha)){
+            presenter.cadastrarUsuario(email, senha);
+        }
+
     }
 
     private boolean validacaoFormulario(String email, String senha) {
@@ -87,34 +87,21 @@ public class CadastrarUsuarioFragment extends Fragment implements CadastrarUsuar
         return valido;
     }
 
-    private void cadastrarUsuario(String email, String senha) {
-        if(validacaoFormulario(email, senha)){
-            firebaseAuth = ConfigFirebase.getFirebaseAuth();
-            firebaseAuth.createUserWithEmailAndPassword(email, senha).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(Task<AuthResult> task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(getActivity(), "Verifique seu E-Mail para poder continuar", Toast.LENGTH_SHORT).show();
-                        firebaseAuth.getCurrentUser().sendEmailVerification();
-                        transactionFragment(new LoginFragment());
-                    }
-                    else{
-                        try { throw task.getException(); }
-                        catch (FirebaseAuthWeakPasswordException ex){ Toast.makeText(getActivity(), "Senha fraca!!!", Toast.LENGTH_SHORT).show(); }
-                        catch (FirebaseAuthEmailException ex){ Toast.makeText(getActivity(), "Padrão de E-Mail incorrento!!!", Toast.LENGTH_SHORT).show(); }
-                        catch (FirebaseAuthUserCollisionException ex){ Toast.makeText(getActivity(), "E-Mail já cadastrado!!!", Toast.LENGTH_SHORT).show(); }
-                        catch (Exception exception) { exception.printStackTrace(); }
-                    }
-                }
-            });
-        }
-
+    @Override
+    public void mostrarToast(String toast) {
+        Toast.makeText(getActivity(), toast, Toast.LENGTH_SHORT).show();
     }
 
-    private void transactionFragment(Fragment fragment) {
+    @Override
+    public void mudarFragment(Fragment fragment) {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayout_login, fragment);
         transaction.commit();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.destruirView();
+    }
 }
