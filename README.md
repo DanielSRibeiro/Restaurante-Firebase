@@ -5,8 +5,9 @@ Aplicativo de um restaurante onde é obrigatório realizar um login para poder e
 ## Tecnologias utilizadas:
 
 - [x] Java
-- [ ] MVP
+- [x] MVP
 - [x] Firebase: Authentication, Realtime e Storage
+- [ ] Testes unitários e Instrumentados
 
 ### Cadastro Usuário
 
