@@ -7,6 +7,7 @@ Aplicativo de um restaurante onde é obrigatório realizar um login para poder e
 - [x] Java
 - [ ] MVP
 - [x] Firebase: Authentication, Realtime e Storage
+- [ ] Testes unitários e Instrumentados (Em andamento)
 
 ### Cadastro Usuário
 
