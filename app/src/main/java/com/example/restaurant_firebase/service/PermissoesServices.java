@@ -1,16 +1,14 @@
-package com.example.restaurant_firebase.util;
+package com.example.restaurant_firebase.service;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 
 import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 
-public class ConfigPermissoes {
+public class PermissoesServices {
 
     public static void validarPermissoes(Activity activity, String[] permissoes, int requestCode){
         if(Build.VERSION.SDK_INT > 23){

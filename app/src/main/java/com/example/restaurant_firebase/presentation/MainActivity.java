@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.example.restaurant_firebase.R;
 import com.example.restaurant_firebase.presentation.login.LoginFragment;
 import com.example.restaurant_firebase.presentation.consulta.ConsultaFragment;
-import com.example.restaurant_firebase.util.ConfigFirebase;
+import com.example.restaurant_firebase.service.FirebaseServices;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initView();
     }
 
@@ -54,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
+
     public void setToolbarTitle(String title){
         getSupportActionBar().setTitle(title);
     }
@@ -63,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+
+
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        firebaseAuth = ConfigFirebase.getFirebaseAuth();
+        firebaseAuth = FirebaseServices.getFirebaseAuth();
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

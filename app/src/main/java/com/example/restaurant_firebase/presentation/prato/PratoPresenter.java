@@ -1,14 +1,12 @@
 package com.example.restaurant_firebase.presentation.prato;
 
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.restaurant_firebase.model.PratoDto;
-import com.example.restaurant_firebase.util.ConfigFirebase;
+import com.example.restaurant_firebase.service.FirebaseServices;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +21,7 @@ public class PratoPresenter implements PratoContract.Presenter{
     private PratoContract.View view;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
-    private FirebaseAuth firebaseAuth = ConfigFirebase.getFirebaseAuth();
+    private FirebaseAuth firebaseAuth = FirebaseServices.getFirebaseAuth();
 
     public PratoPresenter(PratoContract.View view) {
         this.view = view;
@@ -31,7 +29,7 @@ public class PratoPresenter implements PratoContract.Presenter{
 
     @Override
     public void cadastrarImagem(String nome, String valor, String descricao, Bitmap bitmap) {
-        storageReference = ConfigFirebase.getFirebaseStorage().child("imagens").child("prato").child(nome+".jpeg");
+        storageReference = FirebaseServices.getFirebaseStorage().child("imagens").child("prato").child(nome+".jpeg");
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
         byte[] byteArray = stream.toByteArray();
@@ -62,7 +60,7 @@ public class PratoPresenter implements PratoContract.Presenter{
     public void cadastrarPrato(String nome, String valor, String descricao, Uri downloadUrl) {
         PratoDto pratoDto = new PratoDto(nome, valor, descricao, downloadUrl.toString(),
                 firebaseAuth.getCurrentUser().getEmail());
-        databaseReference = ConfigFirebase.getDatabaseReference().child("pratos").child(pratoDto.getNome());
+        databaseReference = FirebaseServices.getDatabaseReference().child("pratos").child(pratoDto.getNome());
         databaseReference.setValue(pratoDto).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

@@ -1,7 +1,7 @@
 package com.example.restaurant_firebase.presentation.login;
 
 import com.example.restaurant_firebase.presentation.consulta.ConsultaFragment;
-import com.example.restaurant_firebase.util.ConfigFirebase;
+import com.example.restaurant_firebase.service.FirebaseServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -17,7 +17,7 @@ public class LoginPresenter implements LoginContract.Presenter{
 
     @Override
     public void realizarLogin(String email, String senha) {
-        firebaseAuth = ConfigFirebase.getFirebaseAuth();
+        firebaseAuth = FirebaseServices.getFirebaseAuth();
         firebaseAuth.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

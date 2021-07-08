@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -21,20 +20,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.restaurant_firebase.R;
-import com.example.restaurant_firebase.model.PratoDto;
-import com.example.restaurant_firebase.util.ConfigFirebase;
-import com.example.restaurant_firebase.util.ConfigPermissoes;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.restaurant_firebase.service.PermissoesServices;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class PratoActivity extends AppCompatActivity implements PratoContract.View{
@@ -103,7 +92,7 @@ public class PratoActivity extends AppCompatActivity implements PratoContract.Vi
         imageViewPrato.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConfigPermissoes.validarPermissoes(PratoActivity.this, permissoes, 1);
+                PermissoesServices.validarPermissoes(PratoActivity.this, permissoes, 1);
 
                 if(ActivityCompat.checkSelfPermission(PratoActivity.this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED){
@@ -140,7 +129,7 @@ public class PratoActivity extends AppCompatActivity implements PratoContract.Vi
     private void validacaoFormulario(String editText, TextInputLayout textInput) {
         if(editText.length() < 1){
             valido = false;
-            textInput.setError("Por favor preencha o E-Mail");
+            textInput.setError("Por favor preencha");
         }else{
             textInput.setError("");
         }

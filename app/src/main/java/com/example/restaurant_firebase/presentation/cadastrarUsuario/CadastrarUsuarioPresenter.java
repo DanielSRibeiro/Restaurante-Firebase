@@ -1,7 +1,7 @@
 package com.example.restaurant_firebase.presentation.cadastrarUsuario;
 
 import com.example.restaurant_firebase.presentation.login.LoginFragment;
-import com.example.restaurant_firebase.util.ConfigFirebase;
+import com.example.restaurant_firebase.service.FirebaseServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,7 +21,7 @@ public class CadastrarUsuarioPresenter implements CadastrarUsuarioContract.Prese
 
     @Override
     public void cadastrarUsuario(String email, String senha) {
-        firebaseAuth = ConfigFirebase.getFirebaseAuth();
+        firebaseAuth = FirebaseServices.getFirebaseAuth();
         firebaseAuth.createUserWithEmailAndPassword(email, senha).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(Task<AuthResult> task) {

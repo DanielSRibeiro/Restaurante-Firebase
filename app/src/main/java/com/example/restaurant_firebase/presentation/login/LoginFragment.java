@@ -26,6 +26,7 @@ public class LoginFragment extends Fragment implements LoginContract.View{
     TextInputLayout textInputEmail, textInputSenha;
     SignInButton googleButton;
     LoginContract.Presenter presenter = new LoginPresenter(this);
+    boolean valido;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +54,6 @@ public class LoginFragment extends Fragment implements LoginContract.View{
             public void onClick(View v) {
                 String email = editTextEmail.getText().toString();
                 String senha = editTextSenha.getText().toString();
-                boolean preenchido = validacaoFormulario(email, senha);
                 logarUsuario(email, senha);
             }
         });
@@ -71,28 +71,20 @@ public class LoginFragment extends Fragment implements LoginContract.View{
         });
     }
 
-    private boolean validacaoFormulario(String email, String senha) {
-        boolean valido = true;
-        if(email.isEmpty()){
+    private void validacaoFormulario(String editText, TextInputLayout textInput) {
+        if(editText.length() < 1){
             valido = false;
-            textInputEmail.setError("Por favor preencha o E-Mail");
+            textInput.setError("Por favor preencha");
         }else{
-            textInputEmail.setError("");
+            textInput.setError("");
         }
-
-        if(senha.isEmpty()){
-            valido = false;
-            textInputSenha.setError("Por favor preencha a Senha");
-
-        }else{
-            textInputSenha.setError("");
-        }
-
-        return valido;
     }
 
     private void logarUsuario(String email, String senha) {
-        if(validacaoFormulario(email, senha)){
+        valido = true;
+        validacaoFormulario(email, textInputEmail);
+        validacaoFormulario(senha, textInputSenha);
+        if(valido){
             presenter.realizarLogin(email, senha);
         }
     }

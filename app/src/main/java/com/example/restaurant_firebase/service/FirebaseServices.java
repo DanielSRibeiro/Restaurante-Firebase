@@ -1,4 +1,4 @@
-package com.example.restaurant_firebase.util;
+package com.example.restaurant_firebase.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -6,7 +6,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class ConfigFirebase {
+public class FirebaseServices {
     private static FirebaseAuth firebaseAuth;
     private static StorageReference firebaseStorage;
     private static DatabaseReference databaseReference;
